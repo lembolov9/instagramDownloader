@@ -1,0 +1,8 @@
+db.sqlite3
+media/
+.idea/
+lib64/
+lib/
+include/
+bin/
+

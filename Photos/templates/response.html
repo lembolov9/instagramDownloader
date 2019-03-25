@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<style>
+  .progress {
+   width:50%;
+   background:yellow;
+  }
+  .bar {
+   height:15px;
+   width:0%;
+   background:tomato;
+   text-align:right;
+  }
+ </style>
+
+    <p>User exists, please wait.</p>
+    <div class="progress">
+        <div class="bar"></div>
+    </div>
+    <a style="visibility: hidden" href="{% url 'get_archive' nickname %}" id="archive">download archive</a>
+    <a href="{% url 'start' %}">back to prompt</a>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script type="text/javascript">
+   var poll_xhr;
+   var willstop = 0;
+  (function(){
+    var poll = function(){
+      var nickname = "{{ nickname }}";
+      poll_xhr = $.ajax({
+        url:'get-status/',
+        type: 'POST',
+        data: {
+            nickname: nickname,
+            csrfmiddlewaretoken: "{{csrf_token}}",
+        },
+        success: function(result) {
+                    if (result.count === result.downloaded) {
+                        jQuery('.bar').css({'width': 100 + '%'});
+                        jQuery('.bar').html(100 + '%');
+                        if (result.zip) {
+                            willstop = 1;
+                            document.getElementById('archive').style.visibility = 'visible';
+                        }
+                       } else {
+                         jQuery('.bar').css({'width': ((result.downloaded/result.count) * 100) + '%'});
+                         jQuery('.bar').html(((result.downloaded/result.count) * 100) + '%');
+                       };
+                    }
+      });
+    };
+    var refreshIntervalId = setInterval(function() {
+      poll();
+      if(willstop == 1){
+        clearInterval(refreshIntervalId);
+      }
+    },500);
+  })();
+</script>
+</body>
+</html>
