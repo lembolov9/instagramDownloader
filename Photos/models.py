@@ -14,6 +14,7 @@ def ger_photo_name(instance, user):
 
 class ProfilePhotos(models.Model):
     name = models.CharField(max_length=40)
+    add_date = models.DateTimeField(auto_now_add=True)
     count = models.IntegerField()
     zip = models.FileField(upload_to=gen_zip_name, blank=True)
 

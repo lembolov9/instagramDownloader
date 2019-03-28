@@ -1,5 +1,7 @@
 from django.apps import AppConfig
 
-
-class PhotozipConfig(AppConfig):
+class PhotosConfig(AppConfig):
     name = 'Photos'
+
+    def ready(self):
+        import Photos.receivers

@@ -1,11 +1,13 @@
 import hashlib
 import json
 import zipfile
+from datetime import timedelta
 from io import BytesIO
 from urllib.parse import quote_plus
 
 import requests
 from django.core.files.base import ContentFile
+from django.utils import timezone
 
 from instagramDownloader.celery import app
 from Photos.constants import BASE_QUERY, QUERY_ID, USER_AGENT
@@ -75,3 +77,9 @@ def download_complete_checker():
     for i in profiles:
         if Photo.objects.filter(user_id=i.pk).count() == i.count:
             make_zip.apply_async(args = [i.pk])
+
+@app.task()
+def delete_expired_photos():
+    profiles = ProfilePhotos.objects.filter(add_date__lte=timezone.now() - timedelta(minutes=5))
+    for profile in profiles:
+        profile.delete()

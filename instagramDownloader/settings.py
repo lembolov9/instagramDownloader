@@ -136,5 +136,10 @@ CELERY_BEAT_SCHEDULE = {
     'download_complete_checker': {
         'task': 'Photos.tasks.download_complete_checker',
         'schedule': timedelta(seconds=3),
-    }
+    },
+    'delete_expired_photos': {
+        'task': 'Photos.tasks.delete_expired_photos',
+        'schedule': timedelta(minutes=1),
+    },
+
 }
