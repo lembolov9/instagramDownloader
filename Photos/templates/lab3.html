@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script>
+
+    function wrapText(context, canvas, text, marginLeft, maxWidth, lineHeight)
+    {
+        let lines = [];
+        let words = text.split(" ");
+        let countWords = words.length;
+        let line = "";
+
+        for (let n = 0; n < countWords; n++) {
+            const testLine = line + words[n] + " ";
+            const testWidth = context.measureText(testLine).width;
+            if (testWidth > maxWidth) {
+                lines.push(line);
+                line = words[n] + " ";
+            }
+            else {
+                line = testLine;
+            }
+        }
+        lines.push(line);
+
+        let topMargin = (canvas.height - lines.length * lineHeight ) / 2;
+        for (let i = 0; i < lines.length; i++ ) {
+            topMargin += lineHeight;
+            context.textAlign = 'center';
+            context.fillText(lines[i], canvas.width / 2, topMargin);
+        }
+        let a = document.createElement('a');
+        document.body.appendChild(a);
+        a.innerHTML = 'download';
+        a.download = 'picture.png';
+        let dt = canvas.toDataURL('image/png');
+        dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
+        dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=Canvas.png');
+        a.href = dt;
+    }
+
+    function drawText(content, canvas) {
+        $.getJSON("http://api.forismatic.com/api/1.0/?method=getQuote&format=jsonp&jsonp=?", function(json) {
+            let lineHeight = canvas.height / 10;
+            let marginLeft = canvas.width / 15 ;
+            content.font = lineHeight/2 +'pt Calibri';
+            content.fillStyle = '#ffad39';
+            wrapText(content, canvas, json.quoteText, marginLeft,  canvas.width-marginLeft*2, lineHeight);
+        });
+    }
+
+    function drawPostcard(content, canvas,  image_url) {
+        $.ajax({
+            url: image_url,
+            type: 'GET',
+            success: function (result) {
+                let images = [new Image(), new Image(), new Image(), new Image()];
+                for (let i =0 ; i < images.length; i++) {
+                    images[i].crossOrigin = 'anonymous';
+                }
+                images[0].src = result[0].urls.small;
+                images[0].onload = function () {
+                    images[1].src = result[1].urls.small;
+                    images[1].onload = function () {
+                        images[2].src = result[2].urls.small;
+                        images[2].onload = function () {
+                            images[3].src = result[3].urls.small;
+                            images[3].onload = function () {
+                                canvas.width = images[0].width + images[3].width;
+                                canvas.height = (images[0].height + images[3].height)*0.8;
+                                content.drawImage(images[0], 0, 0);
+                                content.drawImage(images[1], images[0].width, 0);
+                                content.drawImage(images[2], 0, images[0].height);
+                                content.drawImage(images[3], images[2].width, images[1].height);
+                                drawText(content, canvas);
+                            };
+                        }
+                    }
+                }
+
+
+            }});
+    }
+
+    document.body.appendChild(document.createElement('canvas'));
+    let canvas = document.body.getElementsByTagName('canvas')[0];
+    let content = canvas.getContext('2d');
+    drawPostcard(content, canvas,  'https://api.unsplash.com/photos/random?collections=462839&orientation=landscape&count=4&client_id=ac0c2f047c98f09d2b9d61ca228b8604a6a6b55a171303fc1b9b42c669fd9b95');
+
+</script>
+</html>

@@ -50,3 +50,6 @@ def get_status(request):
     else:
         data = 'This is not ajax request'
     return HttpResponse(data, content_type='application/json')
+
+def lab_3(request):
+    return render(request, 'lab3.html')
