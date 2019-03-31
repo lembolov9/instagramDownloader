@@ -9,3 +9,9 @@ __pycache__/
 share/
 celerybeat-schedule
 *.cfg
+*.pid
+static/
+ve/
+uwsgi_params
+uwsgi/
+migrations/

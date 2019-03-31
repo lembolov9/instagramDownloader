@@ -9,7 +9,7 @@ import requests
 from django.core.files.base import ContentFile
 from django.utils import timezone
 
-from instagramDownloader.celery import app
+from instagramDownloader.celeryapp import app
 from Photos.constants import BASE_QUERY, QUERY_ID, USER_AGENT
 from Photos.models import ProfilePhotos, Photo
 
