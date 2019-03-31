@@ -36,8 +36,7 @@
             context.textAlign = 'center';
             context.fillText(lines[i], canvas.width / 2, topMargin);
         }
-        let a = document.createElement('a');
-        document.body.appendChild(a);
+        let a = document.getElementsByTagName('a')[0];
         a.innerHTML = 'download';
         a.download = 'picture.png';
         let dt = canvas.toDataURL('image/png');
@@ -92,7 +91,8 @@
     document.body.appendChild(document.createElement('canvas'));
     let canvas = document.body.getElementsByTagName('canvas')[0];
     let content = canvas.getContext('2d');
-    drawPostcard(content, canvas,  'https://api.unsplash.com/photos/random?collections=462839&orientation=landscape&count=4&client_id=ac0c2f047c98f09d2b9d61ca228b8604a6a6b55a171303fc1b9b42c669fd9b95');
+    document.body.appendChild(document.createElement('a'));
+    drawPostcard(content, canvas,  'https://api.unsplash.com/photos/random?collections=462839&orientation=landscape&count=4&client_id=5083e87765f8efaf63fb84305550a5bdc9f4e8302f15abe6afd7bbfcb6831ea3');
 
 </script>
 </html>
